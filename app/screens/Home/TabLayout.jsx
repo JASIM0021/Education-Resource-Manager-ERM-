@@ -46,7 +46,7 @@ console.log('_index', _index)
         <BottomNavigation
 
     
-            // barStyle={{ backgroundColor: theme.colors.gray }}
+            barStyle={{ backgroundColor: theme.colors.background }}
             navigationState={{ index, routes }}
             onIndexChange={setIndex}
             renderScene={renderScene}

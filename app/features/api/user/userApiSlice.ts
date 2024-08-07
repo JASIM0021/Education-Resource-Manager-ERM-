@@ -1,14 +1,22 @@
+import { Endpoints } from "../../../services/endpoint";
 import globalApiSlice from "../globalApiSlice";
 
 const userInfo = globalApiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    saveUser: builder.mutation({
+    createUser: builder.mutation({
       query: (data) => ({
-        url: `/users`,
-        method: "POST",
+        url: 'user/create-user',
+        method: 'POST',
         body: data,
       }),
     }),
+    loginUser: builder.mutation({
+      query: (data) => ({
+        url: Endpoints.login.url,
+        method: 'POST',
+        body: data,
+      })
+    })
   }),
 });
-export const { useSaveUserMutation } = userInfo;
+export const { useCreateUserMutation, useLoginUserMutation } = userInfo;

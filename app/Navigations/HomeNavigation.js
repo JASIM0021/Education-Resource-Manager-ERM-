@@ -13,7 +13,19 @@ const screen = [
   {
     name:SCREEN_NAME.Login,
     component:SCREEN_COMPONENT.LOGIN
-  }
+  },
+  {
+    name:SCREEN_NAME.HomeTab,
+    component: SCREEN_COMPONENT.HOMETAB,
+  },
+  {
+    name:SCREEN_NAME.BookTab,
+    component: SCREEN_COMPONENT.BOOKTAB,
+  },
+  {
+    name:SCREEN_NAME.PdfViewer,
+    component: SCREEN_COMPONENT.PDFVIWER,
+  },
 ];
 
 const HomeNavigation = ({ route }) => {
@@ -24,7 +36,7 @@ const HomeNavigation = ({ route }) => {
     
        
         <Stack.Navigator
-          initialRouteName={'Product'}
+          initialRouteName={SCREEN_NAME.HomeTab}
           screenOptions={{
             headerShown: false,
             headerSearchBarOptions: {

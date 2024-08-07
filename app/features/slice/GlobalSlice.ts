@@ -1,5 +1,4 @@
 
-import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { createSlice } from "@reduxjs/toolkit";
 import { PayloadAction } from "typesafe-actions";
 

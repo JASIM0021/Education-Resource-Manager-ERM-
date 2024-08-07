@@ -1,5 +1,5 @@
 
-import { SafeAreaView, StatusBar, useColorScheme } from "react-native";
+import { LogBox, SafeAreaView, StatusBar, useColorScheme } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
 import React, { useContext, useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
@@ -8,37 +8,52 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from 'react-redux';
 import store from "./app/features/Store.js";
 
-import auth from '@react-native-firebase/auth';
+// import auth from '@react-native-firebase/auth';
 import HomeNavigation from "./app/Navigations/HomeNavigation.js";
 
 import { useDispatch } from 'react-redux';
 import { darkTheme, lightTheme } from "./app/thems/index.js";
 import { GlobalStateProvider } from "./app/Context/GlobalContext.jsx";
+import FlashMessage from "react-native-flash-message";
+import AsyncStorageCustom from "./app/helper/AsyncStorage/index.js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+
+
+LogBox.ignoreAllLogs()
+
 //-------------------------------------//
 export default function App() {
   const [user, setUser] = useState(null);
+  const [ token ,setToken] = useState('')
  
 
   useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged((user) => {
-      setUser(user);
-      console.log('user', user)
-    });
-
+   
+    getToken()
+    // deleteToken()
     // Clean-up function
-    return () => unsubscribe();
+    return () =>{}
   }, []);
-  // const getToken = async () => {
-  //   // await getAsyncStorage("token").then((res) => setToken(res));
-  // };
+  const getToken = async () => {
+    const token = await AsyncStorageCustom.getToken()
+    setToken(token) 
 
+
+
+    console.log('token', token)
+  };
+
+
+  const deleteToken = async()=>{
+    await AsyncStorage.clear()
+  }
   // useEffect(() => {
   //   getToken();
   // }, []);
 
   const colorScheme = useColorScheme();
   const theme = colorScheme === 'dark' ? darkTheme : lightTheme;
-
  
   return (
     // <GestureHandlerRootView style={{ flex: 1 }}>
@@ -56,11 +71,12 @@ export default function App() {
             <NavigationContainer>
               
               {
-                user ? <HomeNavigation/> : <AuthNavigation/>
+                token ? <HomeNavigation/> : <AuthNavigation/>
               }
+            <FlashMessage position="top" />
+
              
             </NavigationContainer>
-           
           </SafeAreaProvider>
         </PaperProvider>
         </Provider>

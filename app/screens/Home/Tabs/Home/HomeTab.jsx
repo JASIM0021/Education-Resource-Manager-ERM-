@@ -69,6 +69,7 @@ const HomeTab = () => {
 
             <Search />
 
+            <ScrollViewHelper>
 
             {/* <View style={{height:800}}> */}
            
@@ -109,12 +110,11 @@ const HomeTab = () => {
                         data={["UPSC", "SSC", "NEET", "CAT","JAM","JEE MAIN","JEXPO","JELET","DIPLOMA"]}
                         renderItem={({ item }) => {
                             return (
-                                <Chip selected={selectedCategory.has(item)} style={[GolbalStyle.chip, { backgroundColor: theme.colors.background }]} onPress={() => onCategoryAdd(item)}>{item}</Chip>
+                                <Chip selectedColor={theme.colors.primary} selected={selectedCategory.has(item)} style={[GolbalStyle.chip, { backgroundColor: theme.colors.background  }]}  onPress={() => onCategoryAdd(item)}>{item}</Chip>
                             )
                         }}
                     />
                 </View>
-                <ScrollViewHelper>
                 {/* Sugisted BOOK */}
 
                 <View style={[GolbalStyle.mtMD]}>

@@ -34,7 +34,12 @@ const screen = [
   {
     name:'Product',
     component:ProductScreen
-  }
+  },
+  {
+    name:SCREEN_NAME.Introduction,
+    component:SCREEN_COMPONENT.INTRODUCTION
+  },
+
 ];
 
 const AuthNavigation = ({ route }) => {
@@ -42,10 +47,8 @@ const AuthNavigation = ({ route }) => {
   const Stack = createNativeStackNavigator();
   return (
     <SafeAreaProvider>
-    
-       
         <Stack.Navigator
-          initialRouteName={SCREEN_NAME.HomeTab}
+          initialRouteName={SCREEN_NAME.Introduction}
           screenOptions={{
             headerShown: false,
             headerSearchBarOptions: {

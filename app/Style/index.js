@@ -33,6 +33,15 @@ const GolbalStyle = StyleSheet.create({
     align:{
         alignItems:'center'
     },
+    btn:{
+        height: 58,
+        backgroundColor: 'rgb(21, 32, 54)',
+        paddingVertical: 16,
+        paddingHorizontal: 56,
+        justifyContent:'center',
+        alignItems:'center',
+        borderRadius:10
+    },
     row_space_between:{
         flexDirection:'row',
         columnGap:20,
@@ -103,7 +112,7 @@ const GolbalStyle = StyleSheet.create({
             width:1,
             height:1
         },
-        shadowRadius:10,
+        shadowRadius:2,
         shadowOpacity:1,
         flexDirection:'row',
         columnGap:10,
@@ -121,8 +130,16 @@ const GolbalStyle = StyleSheet.create({
     },
     row:{
         display:'flex',
+        flexDirection:'row',
+        rowGap:10,
+        alignItems:'center'
+    },
+
+    column:{
+        display:'flex',
         flexDirection:'column',
-        rowGap:10
+        rowGap:10,
+        // alignItems:'center'
     },
     scroll:{
         paddingBottom:StatusBar.currentHeight * 3

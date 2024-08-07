@@ -5,11 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addProductRequest, deleteProductsRequest, fetchProductsRequest, updateProductRequest } from '../features/saga/product/productActions';
 import { Appbar } from 'react-native-paper';
 import { IconButton, MD3Colors } from 'react-native-paper';
-import auth from '@react-native-firebase/auth'
 import { Formik } from 'formik';
 import validations from '../validations';
 import * as ImagePicker from 'expo-image-picker';
-import storage from '@react-native-firebase/storage'
+// import storage from '@react-native-firebase/storage'
 import { startLoading, stopLoading } from '../features/slice/GlobalSlice';
 
 const ProductScreen = ({ navigation }) => {
@@ -57,10 +56,10 @@ const [editModel,setEditModel]=useState(false)
   const uploadImage = async (image) => {
     dispatch(startLoading())
     try{console.log('image', image?.assets[0]?.uri)
-    const reference = storage().ref('image');
-    const response = await fetch(image.assets[0].uri);
-    const blob = await response.blob();
-    await reference.put(blob);
+    // const reference = storage().ref('image');
+    // const response = await fetch(image.assets[0].uri);
+    // const blob = await response.blob();
+    // await reference.put(blob);
     dispatch(stopLoading())
     return reference.getDownloadURL();
 
@@ -109,7 +108,7 @@ const [editModel,setEditModel]=useState(false)
   };
 
   const logout = () => {
-    auth().signOut()
+    // auth().signOut()
     navigation.navigate('Login')
   }
 

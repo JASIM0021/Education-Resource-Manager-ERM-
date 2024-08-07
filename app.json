@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "mytask",
-    "slug": "mytask",
+    "name": "EducationResourceManager",
+    "slug": "EducationResourceManager",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -11,12 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff",
       "plugins": [
-        "@react-native-google-signin/google-signin",
-        "@react-native-firebase/app",
-        "@react-native-firebase/auth",
-        "@react-native-firebase/firestore",
-        "react-native-reanimated/plugin",
-        "@react-native-firebase/storage",
+       
         [
           "expo-image-picker",
           {
@@ -37,11 +32,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.mytask",
-      "googleServicesFile": "./google-services.json"
+      "package": "com.education.erm"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     }
   }
 }
+
+

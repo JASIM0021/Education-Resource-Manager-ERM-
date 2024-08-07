@@ -12,7 +12,10 @@ const productValidationSchema = Yup.object().shape({
   const validateEmail = (email) => {
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
+     // Validate password
   };
+  const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
   
 
-  export default {productValidationSchema,authValidation , validateEmail}
+  export default {productValidationSchema,authValidation , validateEmail,strongPasswordRegex}

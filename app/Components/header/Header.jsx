@@ -16,18 +16,18 @@ const Header = ({ isHome, title, size ,isBack}) => {
           <TouchableOpacity style={{marginRight:10}} onPress={()=>{
             navigate.back()
           }}>
-            <Ionicons name="arrow-back" size={30} />
+            <Ionicons color={theme.colors.primary} name="arrow-back" size={30} />
           </TouchableOpacity>
 
         )
       }
 
-      <CustomText text={title} size={size ? size : "md"} spacing={0.5} fontWeight={"bold"} underline={true}/>
+      <CustomText  text={title} size={size ? size : "md"} spacing={0.5} fontWeight={"bold"} underline={true}/>
 
       {
         isHome &&
 
-        <Appbar.Action icon="account" onPress={() => { }} />
+        <Appbar.Action icon="account" color={theme.colors.primary} onPress={() => { }} />
 
       }
     </Appbar.Header>

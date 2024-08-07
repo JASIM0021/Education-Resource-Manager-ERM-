@@ -1,6 +1,6 @@
 import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { Card, Divider, useTheme } from 'react-native-paper';
+import { Button, Card, Divider, useTheme } from 'react-native-paper';
 import GolbalStyle from '../../Style';
 import ImageConstant from '../../Constant/ImageConstant';
 import CustomText from '../../Components/Text';
@@ -70,13 +70,16 @@ const onBoarding = () => {
             <View style={[GolbalStyle.align, GolbalStyle.mtLG]}>
 
                 <CustomText text={appContent.start_learning} size={'lg'} spacing={4} textAlign={'center'} />
+              
 
                 <CustomText text={appContent.onboard_one_description} size={'sm'} spacing={1} textAlign={'center'} marginTop={20} />
 
 
 
             </View>
-            <CustomButton label={appContent.onboard_button} marginTop={20}  onPress={()=>navigation.push({screen:SCREEN_NAME.Login,data:{}}) }/>
+            <Button style={[GolbalStyle.mtMD]}  mode={'contained'}  onPress={()=>navigation.push({screen:SCREEN_NAME.Login,data:{}}) }>
+        {appContent.onboard_button}
+          </Button>
 
             <View style={[GolbalStyle.rowCenter, { marginTop: 30 }]}>
                 <CustomText text={appContent.alrady_account} size='sm' spacing={2} textAlign='center' underline={true} />

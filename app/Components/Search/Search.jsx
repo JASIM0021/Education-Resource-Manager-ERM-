@@ -45,8 +45,10 @@ const Search = () => {
     input: {
       flex: 1,
       justifyContent: 'center',
+      color:theme.colors.primary,
       alignItems: 'center',
       paddingLeft: 50,
+      borderColor:theme.colors.primary
     },
   });
 
@@ -59,7 +61,7 @@ const Search = () => {
         <TextInput
           style={[GlobalStyle.txtRounded, styles.input]}
           placeholder="Search"
-          placeholderTextColor={theme.colors.placeholder}
+          placeholderTextColor={theme.colors.primary}
           onChangeText={(text) => { setSearchText(text); }}
         />
       </View>

@@ -1,4 +1,4 @@
-rootProject.name = 'mytask'
+rootProject.name = 'EducationResourceManager'
 
 dependencyResolutionManagement {
   versionCatalogs {

@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native'
+import { FlatList, StatusBar, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native'
 import React from 'react'
 import Header from '../../../../Components/header/Header'
 import GolbalStyle from '../../../../Style'
@@ -14,14 +14,14 @@ const BookTab = ({ navigation }) => {
   const route = useRoute()
 
   const data = route?.params?.data
- const navigate = useNavigationHelper()
+  const navigate = useNavigationHelper()
   console.log('data', data)
   const theme = useTheme()
   const coloerSchime = useColorScheme()
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 20,
+      paddingHorizontal: responsiveWidth/4,
       backgroundColor: theme.colors.background,
     },
     surface: {
@@ -43,18 +43,18 @@ const BookTab = ({ navigation }) => {
       name: "CLASS I",
       description: 'is book is under the board of WBBSE',
       code: 'I',
-      bookCategory:[
+      bookCategory: [
         {
           name: "English",
           description: "Writen by: Gefre archentory",
           code: 'En',
-          bookCategory:[
+          bookCategory: [
             {
               name: "Greetings and Introductions",
               description: "Introduces basic greetings like hello, goodbye, thank you, and teaches students how to introduce themselves.",
               code: 'WB1-Eng' // Replace with appropriate WBBSE subject code (Eng - English),
               ,
-              type:"pdf"
+              type: "pdf"
             },
             {
               name: "The Alphabet",
@@ -87,26 +87,26 @@ const BookTab = ({ navigation }) => {
               code: 'WB1-Eng'
             }
           ]
-          
 
-      },
-      {
+
+        },
+        {
           name: "MATH",
           description: "Writen by: Gefre archentory",
           code: 'M',
-          
-      },
-      {
+
+        },
+        {
           name: "HISTORY",
           description: "Writen by: Gefre archentory",
           code: 'H'
-      },
-      {
+        },
+        {
           name: "PHYSICS",
           description: "Writen by: Gefre archentory",
           code: 'PHY',
-         
-      }
+
+        }
       ]
     },
     {
@@ -177,8 +177,8 @@ const BookTab = ({ navigation }) => {
     }
 
   ]
-const [listData,setListData] = React.useState([])
-  
+  const [listData, setListData] = React.useState([])
+
   const onCategoryAdd = (item) => {
 
     setSelectedCategory(item)
@@ -196,68 +196,68 @@ const [listData,setListData] = React.useState([])
     "NIOS",  // National Institute of Open Schooling
     "State Boards"]
 
-  
-    React.useEffect(()=>{
-      setListData(data?.item?.length > 0 ? data?.item :data?.item ?[]:  classOfStudy)
-    },[data?.item])
+
+  React.useEffect(() => {
+    setListData(data?.item?.length > 0 ? data?.item : data?.item ? [] : classOfStudy)
+  }, [data?.item])
 
   return (
     <View style={styles.container}>
       <Header isBack={data?.isBack} title={data?.title ? data?.title : "Please Selecet an Category You want to Read"} />
       {/*  Category */}
       <View style={[GolbalStyle.mtMD, GolbalStyle.row_space_between]}>
-        <CustomText text={data?.title ? data?.title : 'Exam Board'} size={'lg'} fontWeight={'bold'} underline={true}/>
+        <CustomText text={data?.title ? data?.title : 'Exam Board'} size={'lg'} fontWeight={'bold'} underline={true} />
       </View>
 
       {/* Chip */}
-{
+      {
 
-!data?.isBack &&
-<View style={[GolbalStyle.mtSM,]}>
-<FlatList
+        !data?.isBack &&
+        <View style={[GolbalStyle.mtSM,]}>
+          <FlatList
 
-  showsHorizontalScrollIndicator={false}
-  horizontal={true}
-  contentContainerStyle={[GolbalStyle.row_space_between]}
-  data={board}
-  renderItem={({ item }) => {
-    return (
-      <Chip selected={selectedCategory == item} style={[GolbalStyle.chip, { backgroundColor: theme.colors.background }]} onPress={() => onCategoryAdd(item)}>{item}</Chip>
-    )
-  }}
-/>
-</View>
-}
+            showsHorizontalScrollIndicator={false}
+            horizontal={true}
+            contentContainerStyle={[GolbalStyle.row_space_between]}
+            data={board}
+            renderItem={({ item }) => {
+              return (
+                <Chip selectedColor={theme.colors.primary} selected={selectedCategory == item} style={[GolbalStyle.chip, { backgroundColor: theme.colors.background }]} onPress={() => onCategoryAdd(item)}>{item}</Chip>
+              )
+            }}
+          />
+        </View>
+      }
 
-     
+
 
       {/*  Class */}
       <View style={[GolbalStyle.mtMD, GolbalStyle.scroll]}>
 
-{console.log('data?.item', listData)}
+        {console.log('data?.item', listData)}
         <FlatList
-          contentContainerStyle={[GolbalStyle.row, { backgroundColor: theme.colors.background, paddingHorizontal: 5 }]}
+          contentContainerStyle={[GolbalStyle.column, { backgroundColor: theme.colors.background,paddingBottom:StatusBar.currentHeight * 5 }]}
           data={listData}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => {
             return (
               <>
-                <TouchableOpacity style={styles.surface} activeOpacity={0.7} onPress={()=>{
+                <TouchableOpacity style={styles.surface} activeOpacity={0.7} onPress={() => {
 
-                  if(item?.bookCategory?.length > 0){
-navigate.push({screen:SCREEN_NAME.BookTab,data:{item:item?.bookCategory,title:item?.name,isBack:true}})
+                  if (item?.bookCategory?.length > 0) {
+                    navigate.push({ screen: SCREEN_NAME.BookTab, data: { item: item?.bookCategory, title: item?.name, isBack: true } })
 
-                  }else{
-                     switch(item?.type){
+                  } else {
+                    switch (item?.type) {
                       case "pdf":
-                        navigate.push({screen:SCREEN_NAME.PdfViewer,data:item?.link})
-                     }
+                        navigate.push({ screen: SCREEN_NAME.PdfViewer, data: item?.link })
+                    }
                   }
                 }}>
-                  <Avatar.Text color={coloerSchime != 'dark' ? lightTheme.colors.background : darkTheme.colors.background} style={{ backgroundColor: theme.colors.primary }} size={responsiveHeight / 1.4} label={item?.code?.slice(0,2)} />
+                  <Avatar.Text color={coloerSchime != 'dark' ? lightTheme.colors.background : darkTheme.colors.background} style={{ backgroundColor: theme.colors.primary }} size={responsiveHeight / 1.4} label={item?.code?.slice(0, 2)} />
                   <View >
-                    <CustomText  text={item.name} bold={'bold'} size={"md"} spacing={0} />
-                    <CustomText   text={item?.description?.slice(0,30) +"..."} size={'sm'} fontWeight={"bold"} spacing={0} />
+                    <CustomText text={item.name} bold={'bold'} size={"md"} spacing={0} />
+                    <CustomText text={item?.description?.slice(0, 30) + "..."} size={'sm'} fontWeight={"bold"} spacing={0} />
 
                   </View>
                 </TouchableOpacity>

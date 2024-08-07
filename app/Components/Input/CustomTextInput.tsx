@@ -1,19 +1,25 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, useColorScheme, View } from 'react-native'
 import React from 'react'
-import { TextInput } from 'react-native-paper'
+import { HelperText, TextInput, useTheme } from 'react-native-paper'
 import GolbalStyle from '../../Style';
+import { darkTheme, lightTheme } from '../../thems';
 
-const CustomTextInput = ({label, values, handleChange, handleBlur, isSecure, touched, errors }) => {
+const CustomTextInput = ({label, values, handleChange,placeholder, handleBlur, isSecure, touched, errors }) => {
     const [secureText, setSecureText] = React.useState(true);
     const toggleSecureTextEntry = () => {
         setSecureText(!secureText);
     };
+    const theme = useTheme()
+    const colorScheme = useColorScheme()
     return (
+        <>
         <TextInput
-        style={[GolbalStyle.mtSM]}
-        
+        style={{backgroundColor:theme.colors.background}}
+        placeholder={placeholder}
             mode="outlined"
             label={label}
+            
+            textColor={colorScheme == 'dark' ? lightTheme.colors.background : darkTheme.colors.background}
             secureTextEntry={isSecure ? secureText : false}
             value={values}
             onChangeText={handleChange}
@@ -28,6 +34,12 @@ const CustomTextInput = ({label, values, handleChange, handleBlur, isSecure, tou
             error={Boolean(touched) && Boolean(errors)}
 
         />
+        {errors && (
+            <HelperText style={{ color: theme.colors.error }}>
+              {errors}
+            </HelperText>
+          )}
+          </>
     )
 }
 
