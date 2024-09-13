@@ -1,74 +1,45 @@
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import ProductScreen from "../screens/ProductScreen";
-import {  SCREEN_COMPONENT, SCREEN_NAME } from "../Constant";
+import { SCREEN_COMPONENT, SCREEN_NAME } from '../Constant';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { NativeModules } from 'react-native';
 
-
-
+const { SharedPreferencesModule } = NativeModules;
 const screen = [
   {
-    name:SCREEN_NAME.onBoarding,
-    component: SCREEN_COMPONENT.ONBOARDING,
+    name: SCREEN_NAME.Home,
+    component: SCREEN_COMPONENT.Home,
   },
   {
-    name:SCREEN_NAME.Register ,
-    component: SCREEN_COMPONENT.REGISTER,
+    name: SCREEN_NAME.GuidScreen,
+    component: SCREEN_COMPONENT.GuidScreen,
   },
-  {
-    name:SCREEN_NAME.Login,
-    component: SCREEN_COMPONENT.LOGIN,
-  },
-  {
-    name:SCREEN_NAME.HomeTab,
-    component: SCREEN_COMPONENT.HOMETAB,
-  },
-  {
-    name:SCREEN_NAME.BookTab,
-    component: SCREEN_COMPONENT.BOOKTAB,
-  },
-  {
-    name:SCREEN_NAME.PdfViewer,
-    component: SCREEN_COMPONENT.PDFVIWER,
-  },
-  {
-    name:'Product',
-    component:ProductScreen
-  },
-  {
-    name:SCREEN_NAME.Introduction,
-    component:SCREEN_COMPONENT.INTRODUCTION
-  },
-
 ];
 
 const AuthNavigation = ({ route }) => {
-
   const Stack = createNativeStackNavigator();
+  const secretCode = SharedPreferencesModule.getString('@first_time_open', '');
+  console.log('secretCode', secretCode);
   return (
     <SafeAreaProvider>
-        <Stack.Navigator
-          initialRouteName={SCREEN_NAME.Introduction}
-          screenOptions={{
-            headerShown: false,
-            headerSearchBarOptions: {
-              cancelButtonText: "Cancel",
-            },
-          }}
-        >
-          {screen.map((sc,index) => {
-            return (
-              <>
-                <Stack.Screen 
-                  name={sc.name}
-                  component={sc.component}
-                  key={sc.name}
-                />
-              </>
-            );
-          })}
-        </Stack.Navigator>
-    
+      <Stack.Navigator
+        initialRouteName={
+          secretCode ? SCREEN_NAME.Home : SCREEN_NAME.GuidScreen
+        }
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        {screen.map((sc, index) => {
+          return (
+            <Stack.Screen
+              name={sc.name}
+              component={sc.component}
+              key={sc.name}
+            />
+          );
+        })}
+      </Stack.Navigator>
     </SafeAreaProvider>
   );
 };
