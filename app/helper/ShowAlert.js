@@ -1,4 +1,3 @@
-import { ToastAndroid } from "react-native";
 import { showMessage, hideMessage } from "react-native-flash-message";
 
 const showError = (message) => {
@@ -22,11 +21,6 @@ const showWarn = (message) => {
     icon: "info",
   });
 };
-const showToast = (message) => {
-  ToastAndroid.SHORT
-  ToastAndroid.CENTER
 
-  ToastAndroid.show(message,1000);
-}
 
-export const ShowAlertMsg = { showError, showSuccess ,showWarn,showToast};
+export const ShowAlertMsg = { showError, showSuccess ,showWarn};

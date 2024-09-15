@@ -1,7 +1,7 @@
 import { StyleSheet, Text, useColorScheme, View } from 'react-native'
 import React from 'react'
 import { ActivityIndicator, Icon, MD3Colors, TouchableRipple, useTheme } from 'react-native-paper'
-import { darkTheme, lightTheme } from '../../thems';
+import { darkTheme, lightTheme } from '../../themes';
 import GolbalStyle from '../../Style';
 import CustomText from '../Text';
 

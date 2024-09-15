@@ -1,173 +1,268 @@
-import React from "react";
-import { FlatList, ScrollView, StyleSheet, useColorScheme, View } from "react-native";
-import Header from "../../../../Components/header/Header";
-import Search from "../../../../Components/Search/Search";
-import ScrollViewHelper from "../../../../Components/ScrollViewHelper/ScrollViewHelper";
-import CustomText from "../../../../Components/Text";
-import CustomCards from "../../../../Components/Cards/CustomCards";
-import { Chip, useTheme } from "react-native-paper";
-import { responsiveHeight } from "../../../../thems";
-import GolbalStyle from "../../../../Style";
+import React, { useCallback, useMemo, useRef } from 'react';
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+  Animated,
+  PanResponder,
+} from 'react-native';
+import Header from '../../../../Components/header/Header';
+import Search from '../../../../Components/Search/Search';
+import ScrollViewHelper from '../../../../Components/ScrollViewHelper/ScrollViewHelper';
+import CustomText from '../../../../Components/Text';
+import CustomCards from '../../../../Components/Cards/CustomCards';
+import { responsiveHeight, responsiveWidth } from '../../../../themes';
+import GolbalStyle from '../../../../Style';
+import { useTheme } from 'react-native-paper';
+import ImageConstant from '../../../../Constant/ImageConstant';
+import Swiper from 'react-native-swiper';
+import BookCard from '../../../../Components/BookCard/BookCard';
+import AutocompleteDistricts from '../../../../Components/AutoComplete/AutocompleteDistricts';
+import ActionSheet from 'react-native-actions-sheet';
+import { useSelector } from 'react-redux';
+import useNavigationHelper from '../../../helper/NavigationHelper';
+import { SCREEN_NAME } from '../../../../Constant';
 
 const HomeTab = () => {
-    const theme = useTheme()
+  const theme = useTheme();
+  const colorSchem = useColorScheme();
+  const [selectedCategory, setSelectedCategory] = React.useState(new Set());
+  const [isActionSheetVisible, setActionSheetVisible] = React.useState(false);
+  const { location } = useSelector(state => state.globalReducer);
+  console.log('location', location);
+  const actionSheetRef = useRef(null);
+  const openActionSheet = () => {
+    setActionSheetVisible(true);
+    actionSheetRef.current?.show();
+  };
 
-    const colorSchem = useColorScheme()
-    const [selectedCategory, setSelectedCategory] = React.useState(new Set())
+  const closeActionSheet = () => {
+    setActionSheetVisible(false);
+  };
 
-    const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            paddingHorizontal: 20,
-            backgroundColor: theme.colors.background,
-        },
-        button: {
-            marginTop: 20,
-        },
+  useMemo(() => {
+    actionSheetRef.current?.hide();
+  }, [location?.dustrict]);
+  const pan = useRef(new Animated.ValueXY()).current;
 
-    });
-    const resentRead = [
-        {
-            name: "Modern Physics",
-            description: "Writen by: Gefre archentory",
-            rating: '4.5'
-
-        },
-        {
-            name: "NCRT MATH",
-            description: "Writen by: Gefre archentory",
-            rating: '4.5',
-            
-        },
-        {
-            name: "WBSE HISTORY",
-            description: "Writen by: Gefre archentory",
-            rating: '4.5'
-        },
-        {
-            name: "QUANTUM PHYSICS",
-            description: "Writen by: Gefre archentory",
-            rating: '4.5',
-           
-        }
-    ]
-
-    const onCategoryAdd = (item) => {
-        const newSelectedCategory = new Set(selectedCategory);
-        if (newSelectedCategory.has(item)) {
-            newSelectedCategory.delete(item);
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: Animated.event(
+        [
+          null,
+          { dy: pan.y }, // Track the movement along the y-axis
+        ],
+        { useNativeDriver: false },
+      ),
+      onPanResponderRelease: (e, gestureState) => {
+        // Determine if the panel should be swiped up or down
+        if (gestureState.dy > 0) {
+          // Swiped down
+          Animated.spring(pan, {
+            toValue: { x: 0, y: responsiveHeight / 1.2 },
+            useNativeDriver: false,
+          }).start();
         } else {
-            newSelectedCategory.add(item);
+          // Swiped up
+          Animated.spring(pan, {
+            toValue: { x: 0, y: 0 },
+            useNativeDriver: false,
+          }).start();
         }
-        setSelectedCategory(newSelectedCategory);
-    }
+      },
+    }),
+  ).current;
 
-    return (
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    button: {
+      marginTop: 20,
+    },
+    swiperWrapper: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    swipImage: {
+      width: '100%',
+      height: responsiveHeight * 2,
+      borderRadius: 10,
+    },
+    dot: {
+      backgroundColor: 'rgba(0,0,0,.2)',
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      margin: 3,
+    },
+    activeDot: {
+      backgroundColor: '#000',
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      margin: 3,
+    },
+    cartSection: {
+      height: responsiveHeight / 1.2,
+      backgroundColor: theme.colors.surface,
+      // borderWidth: 1,
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
+      left: 0,
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      justifyContent: 'space-between',
+      borderTopLeftRadius: 10,
+      borderTopRightRadius: 10,
+    },
+  });
 
-        <View style={styles.container}>
-            <Header isHome={true} title={"Welcome ,Sk Jasimuddin"}/>
+  const images = [
+    'https://via.placeholder.com/600x300.png?text=Image+1',
+    'https://via.placeholder.com/600x300.png?text=Image+2',
+    'https://via.placeholder.com/600x300.png?text=Image+3',
+  ];
 
-            <Search />
+  const handleImagePress = index => {
+    console.log(`Image ${index + 1} clicked`);
+  };
 
-            <ScrollViewHelper>
+  const navigation = useNavigationHelper();
 
-            {/* <View style={{height:800}}> */}
-           
-                {/* Continue Watching */}
-                <View style={{ height: responsiveHeight + 200 }}>
-                    <CustomText text={'Continue Reading'} size={'lg'} fontWeight={'bold'} />
+  return (
+    <View style={styles.container}>
+      <Header isBack={false} isShop={true} isPhone={true} />
 
-                    <ScrollView contentContainerStyle={[GolbalStyle.mtSM, { rowGap: 10 }]}>
-
-
-                        {
-                            resentRead.map((item, index) => (
-                                <CustomCards key={index} isLoading={item.isLoading ? item.isLoading : false} name={item.name} description={item.description} rating={item.rating} />
-
-                            ))
-                        }
-
-
-
-                    </ScrollView>
-                </View>
-
-                {/*  Category */}
-                <View style={[GolbalStyle.mtMD, GolbalStyle.row_space_between]}>
-                    <CustomText text={'Categories'} size={'lg'} fontWeight={'bold'} />
-                    <CustomText text={'See All'} size={'sm'} underline={true} />
-                </View>
-
-                {/* Chip */}
-
-
-                <View style={[GolbalStyle.mtSM,]}>
-                    <FlatList
-
-                        showsHorizontalScrollIndicator={false}
-                        horizontal={true}
-                        contentContainerStyle={[GolbalStyle.row_space_between]}
-                        data={["UPSC", "SSC", "NEET", "CAT","JAM","JEE MAIN","JEXPO","JELET","DIPLOMA"]}
-                        renderItem={({ item }) => {
-                            return (
-                                <Chip selectedColor={theme.colors.primary} selected={selectedCategory.has(item)} style={[GolbalStyle.chip, { backgroundColor: theme.colors.background  }]}  onPress={() => onCategoryAdd(item)}>{item}</Chip>
-                            )
-                        }}
-                    />
-                </View>
-                {/* Sugisted BOOK */}
-
-                <View style={[GolbalStyle.mtMD]}>
-                    <CustomText text={'Suggestions for You'} size={'lg'} fontWeight={'bold'} />
-
-                    <FlatList
-                        contentContainerStyle={[GolbalStyle.mtMD, GolbalStyle.row_space_between]}
-                        horizontal={true}
-                        data={resentRead}
-                        showsHorizontalScrollIndicator={false}
-                        renderItem={({ item, index }) => {
-                            return (
-                                <CustomCards key={index} horizontal={false} isLoading={item.isLoading ? item.isLoading : false} name={item.name} description={item.description} rating={item.rating} />
-
-                            )
-                        }}
-
-                    />
-
-                </View>
-
-
-                {/* TOP BOOK */}
-
-                <View style={[GolbalStyle.mtMD]}>
-                    <CustomText text={'Top Book'} size={'lg'} fontWeight={'bold'} />
-
-                    <FlatList
-                        contentContainerStyle={[GolbalStyle.mtMD, GolbalStyle.row_space_between]}
-                        horizontal={true}
-                        data={resentRead}
-                        showsHorizontalScrollIndicator={false}
-                        renderItem={({ item, index }) => {
-                            return (
-                                <CustomCards key={index} horizontal={false} isLoading={item.isLoading ? item.isLoading : false} name={item.name} description={item.description} rating={item.rating} />
-
-                            )
-                        }}
-
-                    />
-
-                </View>
-            </ScrollViewHelper>
-
-
-
-
-
-
-
+      <View style={{ paddingHorizontal: 16 }}>
+        <View style={[GolbalStyle.row]}>
+          <CustomText
+            text="Sample collection from"
+            size="sm"
+            bold="400"
+            color="gray"
+          />
+          <TouchableOpacity onPress={() => openActionSheet()}>
+            <View style={[GolbalStyle.row]}>
+              <Image source={ImageConstant.location} />
+              <CustomText
+                text={location?.district}
+                size="sm"
+                bold="bold"
+                underline
+              />
+            </View>
+          </TouchableOpacity>
         </View>
-    )
 
-}
+        <Search isClick={true} />
 
-export default HomeTab
+        <ScrollViewHelper>
+          {/* Image Swiper */}
+          <View style={{ height: responsiveHeight * 2 }}>
+            <Swiper
+              style={styles.swiperWrapper}
+              autoplay
+              autoplayTimeout={2.5}
+              dot={<View style={styles.dot} />}
+              activeDot={<View style={styles.activeDot} />}
+            >
+              {images.map((image, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => handleImagePress(index)}
+                >
+                  <Image
+                    source={ImageConstant.offer}
+                    style={styles.swipImage}
+                  />
+                </TouchableOpacity>
+              ))}
+            </Swiper>
+          </View>
+
+          {/* Service */}
+          <View style={[GolbalStyle.mtMD]}>
+            <CustomText text="Service" bold="bold" />
+          </View>
+
+          {/* CARD */}
+          <View style={[GolbalStyle.mtSM]}>
+            <FlatList
+              contentContainerStyle={{
+                columnGap: 20,
+              }}
+              data={[1, 2]}
+              horizontal={true}
+              renderItem={({ item }) => {
+                return (
+                  <BookCard
+                    onPress={() => {
+                      console.log('first');
+                      navigation.push({
+                        screen: SCREEN_NAME.BloodGroupTest,
+                        data: {},
+                      });
+                    }}
+                    title={'Book a test and diagnostic appointment.'}
+                    subTitle={'Blood test, X-ray, MRI, CT scan Etc...'}
+                  />
+                );
+              }}
+            />
+          </View>
+        </ScrollViewHelper>
+      </View>
+
+      {/* View cart section */}
+      <Animated.View
+        {...panResponder.panHandlers}
+        style={[
+          styles.cartSection,
+          {
+            transform: [{ translateY: pan.y }],
+          },
+        ]}
+      >
+        <TouchableOpacity>
+          <View style={[GolbalStyle.row]}>
+            <CustomText text={`1 Test | `} bold="bold" />
+            <CustomText text={`Select`} />
+            <Image
+              source={ImageConstant.down_arrow}
+              style={GolbalStyle.icon_sm}
+            />
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            height: responsiveHeight / 2,
+            backgroundColor: theme.colors.primary,
+            padding: 10,
+            paddingHorizontal: 30,
+            borderRadius: 10,
+          }}
+        >
+          <CustomText text="View Cart" bold="bold" color="white" />
+        </TouchableOpacity>
+      </Animated.View>
+
+      <ActionSheet ref={actionSheetRef}>
+        <View style={[GolbalStyle.column, { height: responsiveHeight * 4 }]}>
+          <AutocompleteDistricts />
+        </View>
+      </ActionSheet>
+    </View>
+  );
+};
+
+export default HomeTab;

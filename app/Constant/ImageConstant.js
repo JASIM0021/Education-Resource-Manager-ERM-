@@ -1,6 +1,23 @@
 export default {
-    onBoardOne : require('../assets/Images/pic1.png'),
-    onBoardTwo : require('../assets/Images/pic2.png'),
-    onBoardThree : require('../assets/Images/pic3.png'),
-    bookDemo:require('../assets/Images/book.jpeg')
-}
+  onBoardOne: require('../assets/Images/pic1.png'),
+  onBoardTwo: require('../assets/Images/pic2.png'),
+  onBoardThree: require('../assets/Images/pic3.png'),
+  bookDemo: require('../assets/Images/book.jpeg'),
+  logo: require('../assets/Images/icon.png'),
+  shop: require('../assets/Images/shop.png'),
+  call: require('../assets/Images/call.png'),
+  india: require('../assets/Images/india.png'),
+  socialIcon: require('../assets/Images/socialIcon.png'),
+  fromIndia: require('../assets/Images/fromIndia.png'),
+  resend: require('../assets/Images/resend.png'),
+  location_request: require('../assets/Images/location_request.png'),
+  location: require('../assets/Images/location.png'),
+  offer: require('../assets/Images/offer.png'),
+  btnBookNow: require('../assets/Images/btnBookNow.png'),
+  doctor: require('../assets/Images/doctor.png'),
+  uparrow: require('../assets/Images/uparrow.png'),
+  down_arrow: require('../assets/Images/down-arrow.png'),
+  demo_img: require('../assets/Images/demo_img.png'),
+  blood_logo: require('../assets/Images/blood-logo.png'),
+  arrow_up: require('../assets/Images/arrow-up.png'),
+};

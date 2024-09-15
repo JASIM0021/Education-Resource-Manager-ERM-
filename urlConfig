@@ -14,14 +14,14 @@ if [ -f "$ENV_FILE" ]; then
   # Check if the environment variable exists in the .env file
   if grep -q "^$ENV_VARIABLE=" "$ENV_FILE"; then
     # Update the existing environment variable
-    sed -i.bek "s|^$ENV_VARIABLE=.*|$ENV_VARIABLE=http://$LOCAL_IP:5699/api/v1/" "$ENV_FILE"
+    sed -i.bek "s|^$ENV_VARIABLE=.*|$ENV_VARIABLE=http://$LOCAL_IP:3000/api/v1/" "$ENV_FILE"
   else
     # Add the environment variable if it does not exist
-    echo "$ENV_VARIABLE=http://$LOCAL_IP:5699/api/v1/" >> "$ENV_FILE"
+    echo "$ENV_VARIABLE=http://$LOCAL_IP:3000/api/v1/" >> "$ENV_FILE"
   fi
   echo "Updated $ENV_VARIABLE in $ENV_FILE with http://$LOCAL_IP"
 else
   echo "$ENV_FILE does not exist. Creating $ENV_FILE and adding $ENV_VARIABLE."
-  echo "$ENV_VARIABLE=http://$LOCAL_IP:5699/api/v1/" > "$ENV_FILE"
+  echo "$ENV_VARIABLE=http://$LOCAL_IP:3000/api/v1/" > "$ENV_FILE"
 fi
 

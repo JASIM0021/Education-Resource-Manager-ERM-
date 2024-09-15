@@ -1,4 +1,4 @@
-rootProject.name = 'EducationResourceManager'
+rootProject.name = 'BUPSE'
 
 dependencyResolutionManagement {
   versionCatalogs {

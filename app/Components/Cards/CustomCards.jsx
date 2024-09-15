@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native'
 import React, { useState } from 'react'
 import GolbalStyle from '../../Style'
-import { darkTheme, lightTheme, responsiveHeight, responsiveWidth } from '../../thems'
+import { darkTheme, lightTheme, responsiveHeight, responsiveWidth } from '../../themes'
 import { ProgressBar, useTheme } from 'react-native-paper'
 import ImageConstant from '../../Constant/ImageConstant'
 import CustomText from '../Text'

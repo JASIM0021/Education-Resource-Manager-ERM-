@@ -2,9 +2,9 @@ import { StyleSheet, Text, useColorScheme, View } from 'react-native'
 import React from 'react'
 import { HelperText, TextInput, useTheme } from 'react-native-paper'
 import GolbalStyle from '../../Style';
-import { darkTheme, lightTheme } from '../../thems';
+import { darkTheme, lightTheme } from '../../themes';
 
-const CustomTextInput = ({label, values, handleChange,placeholder, handleBlur, isSecure, touched, errors }) => {
+const CustomTextInput = ({label, values, handleChange,placeholder, handleBlur, isSecure, touched, errors ,...rest }) => {
     const [secureText, setSecureText] = React.useState(true);
     const toggleSecureTextEntry = () => {
         setSecureText(!secureText);
@@ -14,7 +14,7 @@ const CustomTextInput = ({label, values, handleChange,placeholder, handleBlur, i
     return (
         <>
         <TextInput
-        style={{backgroundColor:theme.colors.background}}
+        style={{backgroundColor:theme.colors.background,...rest}}
         placeholder={placeholder}
             mode="outlined"
             label={label}

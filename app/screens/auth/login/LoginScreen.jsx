@@ -1,13 +1,34 @@
 // RegisterScreen.tsx
-import React, { useCallback, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button, TextInput, Snackbar, useTheme, Icon, IconButton, MD3Colors, Divider, HelperText } from 'react-native-paper';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  TextInput,
+  Text,
+} from 'react-native';
+import {
+  Button,
+  Snackbar,
+  useTheme,
+  Icon,
+  IconButton,
+  MD3Colors,
+  Divider,
+  HelperText,
+  Checkbox,
+} from 'react-native-paper';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import { googleRegister, loginUserRequest, registrationError } from '../../../features/saga/auth/authAction';
+import {
+  googleRegister,
+  loginUserRequest,
+  registrationError,
+} from '../../../features/saga/auth/authAction';
 import validations from '../../../validations';
 import CustomText from '../../../Components/Text';
 import GolbalStyle from '../../../Style';
@@ -16,236 +37,185 @@ import GlobalSlice, { startLoading } from '../../../features/slice/GlobalSlice';
 import CustomTextInput from '../../../Components/Input/CustomTextInput';
 import CustomButton from '../../../Components/CustomButton/CustomButton';
 import FirebaseError from '../../../features/firebase/firebaseError';
-import { responsiveWidth } from '../../../thems';
+import {
+  responsiveHeight,
+  responsiveWidth,
+  screenWidth,
+} from '../../../themes';
 import { SCREEN_NAME } from '../../../Constant';
 import { useLoginUserMutation } from '../../../features/api/user/userApiSlice';
 import { ShowAlertMsg } from '../../../helper/ShowAlert';
 import AsyncStorage from '../../../helper/AsyncStorage';
 import MyPressable from '../../../Components/MyPressable';
 import useNavigationHelper from '../../helper/NavigationHelper';
-
-
+import Header from '../../../Components/header/Header';
+import ImageConstant from '../../../Constant/ImageConstant';
+import CustomNextButton from '../../../Components/Button/CustomButton';
+import { useLoginMutation } from '../../../features/api/auth/authSlice';
+import { validatePhone } from '../../../helper/validationHelper';
+// import { CountryPicker } from 'react-native-country-codes-picker';
 
 const LoginScreen = () => {
-
-  const theme = useTheme()
+  const [show, setShow] = useState(false);
+  const [countryCode, setCountryCode] = useState('');
+  const [checkTerm, setChekTerm] = useState(true);
+  const theme = useTheme();
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       paddingHorizontal: 20,
       backgroundColor: theme.colors.background,
-      justifyContent: 'center'
+      padding: 10,
+      justifyContent: 'space-between',
     },
     button: {
       marginTop: 20,
-    }
+    },
+    Checkbox: {
+      // height:30,
+      // width:30,
+      borderWidth: 1,
+      borderColor: 'black',
+      borderRadius: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
   });
 
   const dispatch = useDispatch();
-  const navigation = useNavigation()
+  const navigation = useNavigationHelper();
   const [snackBarVisible, setSnackBarVisible] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
+  const [phone, setPhone] = useState('');
+  const [loginUser, { data: loginData, error: loginerror, isLoading }] =
+    useLoginMutation();
 
-  const [{ data: loginData, error: loginerror, isLoading }] = useLoginUserMutation()
-
-
-  const { error, user, loader } = useSelector((state) => state.globalReducer)
-  const data = useSelector((state) => state.globalReducer)
-
-  console.log('loginData,', loginData, loginerror)
-
-  console.log('data', data, error)
-
-  const onDismissSnackBar = () => setSnackBarVisible(false);
-
-
-
-  useEffect(() => {
-    if (error) {
-      setErrorMessage(FirebaseError({ error }));
-      setSnackBarVisible(true);
-      // Clear error message after displaying it
-      dispatch(registrationError(null));
+  const handleLogin = async () => {
+    console.log('phone', phone);
+    const validationErrors = validatePhone(phone);
+    console.log('validationErrors', validationErrors);
+    if (phone.length != 10) {
+      ShowAlertMsg.showError('Please enter a valid Phone number');
+      return;
     }
-    if (user != null) {
-      navigation.replace('Product')
-    }
-  }, [error]);
 
-
-  const InputForm = React.useCallback(() => {
-    const [loginUser, { data: loginData, error: loginerror, isLoading }] = useLoginUserMutation()
-    console.log('loginData,', loginData, loginerror)
-    const navigation = useNavigationHelper()
-
-    const [formData, setFormData] = React.useState({
-      email: '',
-      password: ''
-    });
-    const [errors, setErrors] = React.useState({
-      email: '',
-      password: ''
-    });
-
-
-
-    const saveUserData = async(data) =>{
-      await AsyncStorage.setToken(data?.data?.token)
-      await AsyncStorage.setUser(data?.data)
-    }
-    useEffect( () => {
-      if (loginerror?.data) {
-        ShowAlertMsg.showError(loginerror?.data?.message)
-      }
-      if (loginData?.success) {
-        ShowAlertMsg.showSuccess(loginData?.message)
-        saveUserData(loginData)
-
-        navigation.push({
-          screen: SCREEN_NAME.HomeTab,
-          data: {}
-        })
-      }
-      if (loginerror?.error) {
-        ShowAlertMsg.showError(loginerror?.error ? loginerror?.error : "")
-      }
-    }, [loginerror, loginData])
-
-    const handleLogin = async () => {
-      const { email, password } = formData;
-      let valid = true;
-      let newErrors = { email: '', password: '' };
-      //  console.log('newErrors', newErrors)
-
-      if (!(validations.validateEmail(email))) {
-        newErrors.email = 'Invalid email address';
-        valid = false;
-      }
-
-      if (password.length < 6) {
-        newErrors.password = 'Password must be at least 6 characters';
-        valid = false;
-      }
-
-      setErrors(newErrors);
-
-
-      if (valid) {
-        loginUser(formData)
-        //  console.log('newErrors', newErrors)
-
-      }
-    };
-
-
-
-    const handleChange = (name, value) => {
-      setFormData({ ...formData, [name]: value });
-    };
-
-
-
-
-   
-
-    return (
-      <>
-        <CustomTextInput
-          label="Email"
-          value={formData.email}
-          handleChange={(text) => handleChange('email', text)}
-          handleBlur={() => { }}
-          touched={true}
-          errors={errors.email}
-        />
-
-        <CustomTextInput
-          label="Password"
-          isSecure={true}
-          value={formData.password}
-          handleChange={(text) => handleChange('password', text)}
-          handleBlur={() => { }}
-          touched={true}
-          errors={errors.password}
-        />
-
-
-
-        {/* <Button  style={[GolbalStyle.mtMD]}  mode={'contained'}  onPress={()=> {
-          console.log('first')
-          handleLogin()}}>
-     
-          </Button> */}
-        <MyPressable
-          android_ripple={{ color: 'darkgrey', borderless: true, radius: 28 }}
-          touchOpacity={0.6}
-
-          style={[GolbalStyle.mtMD, GolbalStyle.btn]} isLoading={isLoading} onPress={() => {
-            console.log('first')
-            handleLogin()
-          }}
-        >
-          <CustomText text={"Continue"} color={theme.colors.background} />
-        </MyPressable>
-
-        <View style={[GolbalStyle.rowCenter, { marginTop: 30 }]}>
-          <CustomText text={appContent.dont_have_account} size='sm' spacing={2} textAlign='center' />
-          <CustomText text={'Sign Up'} color='blue' size='sm' spacing={2} textAlign='center' underline={true} onPress={() => {
-            navigation.navigate(SCREEN_NAME.Register)
-          }} />
-        </View>
-
-        {/* <View style={[GolbalStyle.rowCenter,GolbalStyle.mtMD]}>
-          <Divider style={{ width: responsiveWidth }} />
-          <CustomText text={'OR'} size='sm' spacing={2} textAlign='center'  />
-          <Divider  style={{ width: responsiveWidth }} />
-        </View>
-  
-        <View style={[GolbalStyle.mtLG, { rowGap: 20 }]}>
-          <Button icon="google" mode={'outlined'} onPress={() => googleLogin()}>
-            {appContent.continue_with_google}
-          </Button>
-          <Button icon="facebook" mode={'outlined'} onPress={() => console.log('Pressed')}>
-            {appContent.continue_with_facebook}
-          </Button>
-          <Button icon="apple" mode={'outlined'} onPress={() => console.log('Pressed')}>
-            {appContent.continue_with_apple}
-          </Button>
-        </View> */}
-      </>
-    );
-  });
-
-
-
+    await loginUser({ contactNumber: phone })
+      .unwrap()
+      .then(data => {
+        if (data.success) {
+          navigation.push({
+            screen: SCREEN_NAME.OTPScreen,
+            data: {
+              phone: data?.data?.contactNumber,
+              otp: data?.data?.otp,
+            },
+          });
+        }
+        console.log('Login success', data);
+      })
+      .catch(error => {
+        console.error('Login error', error);
+      });
+  };
 
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1 }}>
+      <Header isBack={false} />
+      <Divider />
+      <View style={styles.container}>
+        <View>
+          <View style={GolbalStyle.mtLG}>
+            <CustomText text="Enter Phone Number" bold="bold" size="md" />
+            <CustomText
+              text="Enter your phone number to proceed"
+              size="md"
+              color="gray"
+            />
+          </View>
 
-      <View style={[GolbalStyle.align, GolbalStyle.statusBar, { rowGap: 16 }]}>
-        <CustomText text={appContent.welcome} size='md' />
-        <CustomText text={appContent.create_account} size='lg' spacing={4} textAlign='center' bold={'bold'} />
+          <View style={[{ ...GolbalStyle.mtLG }, GolbalStyle.column]}>
+            <CustomText text="Enter your phone number " size="sm" />
 
+            <View
+              style={{
+                ...GolbalStyle.roundedInput,
+                height: responsiveHeight / 1.8,
+                width: responsiveWidth * 9,
+                backgroundColor: theme.colors.surface,
+                paddingHorizontal: 10,
+                alignItems: 'center',
+                flexDirection: 'row',
+                columnGap: 20,
+              }}
+            >
+              <TouchableOpacity onPress={() => setShow(true)}>
+                <Image source={ImageConstant.india} />
+              </TouchableOpacity>
+
+              <TextInput
+                onChangeText={setPhone}
+                placeholder="+91 7679*****0"
+                style={{ flex: 1 }}
+              />
+            </View>
+
+            {/* Check term section */}
+            <View style={[GolbalStyle.row, { padding: 10 }]}>
+              <View style={styles.Checkbox}>
+                <Checkbox
+                  color={theme.colors.primary}
+                  status={checkTerm ? 'checked' : 'unchecked'}
+                  onPress={() => {
+                    setChekTerm(!checkTerm);
+                  }}
+                />
+              </View>
+              <Text>
+                By continuing, your agree to our{' '}
+                <Text style={{ fontWeight: 'bold' }}>Terms & Conditions</Text>{' '}
+                and <Text style={{ fontWeight: 'bold' }}>Privacy Policy</Text>
+              </Text>
+            </View>
+          </View>
+
+          <View
+            style={[
+              GolbalStyle.mtLG,
+              GolbalStyle.row,
+              { justifyContent: 'space-between' },
+            ]}
+          >
+            <Divider style={{ width: '30%' }} bold={true} />
+            <Text>Or Sign up With</Text>
+            <Divider style={{ width: '30%' }} bold={true} />
+          </View>
+
+          <View
+            style={[
+              GolbalStyle.row,
+              GolbalStyle.mtLG,
+              { justifyContent: 'center' },
+            ]}
+          >
+            <TouchableOpacity onPress={() => {}}>
+              <Image source={ImageConstant.socialIcon} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={[GolbalStyle.column_center, { paddingBottom: 20 }]}>
+          <Image source={ImageConstant.fromIndia} />
+
+          <CustomNextButton
+            isLoading={isLoading}
+            onPress={() => {
+              handleLogin();
+            }}
+          />
+        </View>
       </View>
-
-      <View style={[GolbalStyle.justify, GolbalStyle.mtLG]}>
-        <InputForm />
-
-      </View>
-      <Snackbar
-        visible={snackBarVisible}
-        onDismiss={() => setSnackBarVisible(false)}
-        action={{
-          label: 'Close',
-          onPress: () => {
-            setSnackBarVisible(false);
-          },
-        }}>
-        {errorMessage}
-      </Snackbar>
     </View>
   );
 };
-
 
 export default LoginScreen;

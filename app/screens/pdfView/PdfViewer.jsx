@@ -1,13 +1,28 @@
-import React from 'react';
-import { StyleSheet, Dimensions, View } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Dimensions, View, Platform } from 'react-native';
 import Pdf from 'react-native-pdf';
 import Header from '../../Components/header/Header';
-import { responsiveWidth } from '../../thems';
+import { responsiveWidth } from '../../themes';
 import { useTheme } from 'react-native-paper';
+import apiconstant from '../../Constant/apiconstant';
+import { useRoute } from '@react-navigation/native';
+import AsyncStorage from '../../helper/AsyncStorage';
 
-const PdfViewer = () => {
+const PdfViewer = ({navigation}) => {
+
+    const route = useRoute()
+
+    const data = route?.params?.data
+    
+
+    console.log('data', data)
     const theme = useTheme()
-    const source = { uri: 'https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf', cache: true };
+    const [link,setLink] = useState('')
+    const [token,setToken] = useState('')
+
+    const source = { uri: link, cache: Platform.OS == 'ios' ?  true: true };
+
+    console.log('source', source)
     const styles = StyleSheet.create({
         container: {
             flex: 1,
@@ -23,6 +38,28 @@ const PdfViewer = () => {
         }
     });
 
+
+    const getToken = async()=>{
+        
+      const token = await AsyncStorage.getToken();
+    
+
+       
+      return token
+    }
+    React.useEffect(async()=>{
+        const  temp = await getToken()
+        setToken(temp)
+        if(data){
+           
+            setLink(`${apiconstant.url}books/${data}?token=${token}`)
+         
+        }
+       
+    },[data])
+
+    console.log('tokrn', token)
+
     return (
         <> 
             <View style={styles.container}>
@@ -30,8 +67,11 @@ const PdfViewer = () => {
 
                 <Pdf
                     trustAllCerts={false}
+                      
 
-                    source={source}
+                    source={{...source,headers:{
+                        'authorization':token
+                    }}}
                     onLoadComplete={(numberOfPages, filePath) => {
                         console.log(`Number of pages: ${numberOfPages}`);
                     }}
