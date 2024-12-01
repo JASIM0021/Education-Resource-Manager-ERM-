@@ -20,6 +20,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.women.sefty.Constants
+import com.women.sefty.MainActivity
 import com.women.sefty.NotificationService
 import com.women.sefty.PasswordForegroundService
 import com.women.sefty.PasswordPromptActivity
@@ -33,30 +34,47 @@ class NotificationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("NotificationReceiver", "Received action: ${intent.action}")
+        val sharedPref = SharedPreferencesModule(context)
+        val emgListJson = sharedPref.getString("@emergency_numbers", "") ?: ""
 
-        when (intent.action) {
-            NotificationService.ACTION_SAFE -> {
-                Log.d("NotificationReceiver", "I am safe clicked")
-                val sharedPref = SharedPreferencesModule(context)
-               sharedPref.saveString(Constants.SAFE_KEY, Constants.SAFE_NOW)
+        if (emgListJson.equals("")){
+            Toast.makeText(context, "Please set your information first", Toast.LENGTH_SHORT).show()
+            val intent1 = Intent(context, MainActivity::class.java)
+            intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK )
+            context.startActivity(intent1)
+        } else {
+            when (intent.action) {
+
+
+                NotificationService.ACTION_SAFE -> {
+
+
+                    Log.d("NotificationReceiver", "I am safe clicked")
+                    val sharedPref = SharedPreferencesModule(context)
+                    sharedPref.saveString(Constants.SAFE_KEY, Constants.SAFE_NOW)
 //                promptForPassword(context)
-                promptForPasswordActivity(context)
+                    promptForPasswordActivity(context)
 //                rescheduleNotification(context);
 
-            }
-            NotificationService.ACTION_NOT_SAFE -> {
-//                Log.d("NotificationReceiver", "Not safe clicked")
-//                sendEmergencySms(context)
+                }
 
+                NotificationService.ACTION_NOT_SAFE -> {
                     Log.d("NotificationReceiver", "Not safe clicked")
-                    checkAndRequestSmsPermission(context)
+                    sendEmergencySms(context)
+//
+//                    Log.d("NotificationReceiver", "Not safe clicked")
+//                    checkAndRequestSmsPermission(context)
 
-            }
-            NotificationService.ACTION_COMPLETE -> {
-                Log.d("NotificationReceiver", "Safety complete clicked")
-                Toast.makeText(context, "Safety procedure complete!", Toast.LENGTH_SHORT).show()
+                }
+
+                NotificationService.ACTION_COMPLETE -> {
+                    Log.d("NotificationReceiver", "Safety complete clicked")
+                    Toast.makeText(context, "Safety procedure complete!", Toast.LENGTH_SHORT).show()
 //                promptForPassword(context)
-                promptForPasswordActivity(context)
+                    promptForPasswordActivity(context)
+                }
+
+
             }
         }
 
@@ -65,15 +83,15 @@ class NotificationReceiver : BroadcastReceiver() {
 
     private fun promptForPasswordActivity(context: Context) {
 
-        if (Build.VERSION.SDK_INT >= 33 ) {
-            promptForPassworusingService(context)
-//            showPasswordPromptNotification(context)
-
-        }else {
+//        if (Build.VERSION.SDK_INT >= 33 ) {
+//            promptForPassworusingService(context)
+////            showPasswordPromptNotification(context)
+//
+//        }else {
             val intent = Intent(context, PasswordPromptActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK )
             context.startActivity(intent)
-        }
+//        }
 
     }
 

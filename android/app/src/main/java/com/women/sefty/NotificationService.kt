@@ -51,7 +51,27 @@ class NotificationService : Service() {
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // Start the service in the foreground
-        startForeground(NOTIFICATION_ID, createNotification(), FOREGROUND_SERVICE_TYPE_LOCATION)
+//        startForeground(NOTIFICATION_ID, createNotification(), FOREGROUND_SERVICE_TYPE_LOCATION)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "Foreground service location permission is required", Toast.LENGTH_SHORT).show()
+        } else {
+            // Start the foreground service safely
+           try {
+               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                   // For Android 12 and above
+                   startForeground(NOTIFICATION_ID, createNotification(), FOREGROUND_SERVICE_TYPE_LOCATION)
+               } else {
+                   // For Android 11 and below
+                   startForeground(NOTIFICATION_ID, createNotification())
+               }
+           }catch (error:Error){
+               error.printStackTrace()
+           }
+        }
+
+
         scheduleNotification()
         val sharedPref = SharedPreferencesModule(applicationContext)
         sharedPref.saveString(Constants.SAFE_KEY,Constants.SAFE_NOW)
@@ -167,9 +187,9 @@ class NotificationService : Service() {
             .setContentTitle("Are you safe?")
             .setContentText("Please confirm your safety status.")
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .addAction(R.drawable.ic_safe, "I am safe", safePendingIntent)
-            .addAction(R.drawable.ic_not_safe, "Not safe, need help", notSafePendingIntent)
-            .addAction(R.drawable.ic_complete, "Safety complete", completePendingIntent)
+            .addAction(R.drawable.ic_safe, "Safe", safePendingIntent)
+            .addAction(R.drawable.ic_not_safe, "Not Safe", notSafePendingIntent)
+            .addAction(R.drawable.ic_complete, "Complete", completePendingIntent)
             .build()
     }
 

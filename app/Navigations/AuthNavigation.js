@@ -11,8 +11,8 @@ const screen = [
     component: SCREEN_COMPONENT.Home,
   },
   {
-    name: SCREEN_NAME.GuidScreen,
-    component: SCREEN_COMPONENT.GuidScreen,
+    name: SCREEN_NAME.Guid,
+    component: SCREEN_COMPONENT.Guid,
   },
 ];
 

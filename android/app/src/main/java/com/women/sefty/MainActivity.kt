@@ -28,7 +28,7 @@ class MainActivity : ReactActivity() {
     private  val REQUEST_SMS_PERMISSION = 123
     private val LOCATION_PERMISSION_REQUEST_CODE = 1002
     private  val REQUEST_POST_NOTIFICATION_PERMISSION = 1001
-
+private val REQUEST_CODE_LOCATION_PERMISSIONS = 20000
 
 
 
@@ -37,6 +37,36 @@ class MainActivity : ReactActivity() {
 
 
 //        requestPostNotificationPermission(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.FOREGROUND_SERVICE_LOCATION
+                    ),
+                    REQUEST_CODE_LOCATION_PERMISSIONS
+                )
+            }
+        } else {
+            // For Android versions below S, just request the usual location permissions
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ),
+                    REQUEST_CODE_LOCATION_PERMISSIONS
+                )
+            }
+        }
 
         notificationReceiver = NotificationReceiver()
 
@@ -69,10 +99,7 @@ class MainActivity : ReactActivity() {
 
         }
 
-        val filter = IntentFilter().apply {
-            addAction(NotificationService.ACTION_SAFE)
-            addAction(NotificationService.ACTION_NOT_SAFE)
-        }
+
 //        notificationReceiver.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
 //        ReceiverRegistrationHelper.registerReceiver(this,notificationReceiver)
@@ -86,11 +113,14 @@ class MainActivity : ReactActivity() {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 101)
             }
         }
-
+        val filter = IntentFilter().apply {
+            addAction(NotificationService.ACTION_SAFE)
+            addAction(NotificationService.ACTION_NOT_SAFE)
+        }
         registerReceiver(notificationReceiver,filter, RECEIVER_NOT_EXPORTED)
         registerReceiver(smsReciver,smsFilter, RECEIVER_NOT_EXPORTED)
 //        registerReceiver(notificationReceiver, filter)
-        startService(Intent(this, NotificationService::class.java))
+        requestLocationPermissions()
         setTheme(R.style.AppTheme)
         super.onCreate(null)
     }
@@ -165,9 +195,13 @@ class MainActivity : ReactActivity() {
                         startLocationService()
                     }
                 }
+
                 else {
                     Toast.makeText(this, "Permission denied. Cannot send emergency SMS.", Toast.LENGTH_SHORT).show()
                 }
+            }
+            REQUEST_CODE_LOCATION_PERMISSIONS -> {
+                requestLocationPermissions()
             }
         }
     }
@@ -196,7 +230,7 @@ class MainActivity : ReactActivity() {
             this,
             NotificationService::class.java
         )
-        ContextCompat.startForegroundService(this, serviceIntent)
+        startService(serviceIntent)
     }
 
 

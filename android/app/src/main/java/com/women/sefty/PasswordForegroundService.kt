@@ -62,7 +62,6 @@ private val TAG = "PasswordForegroundService"
             .setContentText("Tap to enter the secret password")
             .setSmallIcon(R.drawable.ic_safe)
             .setContentIntent(pendingIntent)
-            
 //            .setAutoCancel(true)
 //            .setSmallIcon(R.drawable.ic_safe_active)
             .build()

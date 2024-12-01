@@ -1,12 +1,12 @@
-import GuidScreen from '../screens/Guid/GuidScreen';
+import Guid from '../screens/Home/Guid/Guid';
 import Home from '../screens/Home/Home';
 
 export const SCREEN_NAME = {
   Home: 'Home',
-  GuidScreen: 'GuidScreen',
+  Guid: 'Guid',
 };
 
 export const SCREEN_COMPONENT = {
   Home: Home,
-  GuidScreen: GuidScreen,
+  Guid: Guid,
 };
